@@ -17,6 +17,12 @@ class Column {
     const result = await connection.execute('SELECT * FROM columns WHERE id = ?;', [columnId])
     return result[0]
   }
+
+  async getList (params) {
+    const { page = 1, pageSize = 10, name = '' } = params
+    const result = await connection.execute('SELECT id, column_name FROM columns WHERE column_name like ? LIMIT ? OFFSET ?;', [`%${name}%`, `${pageSize}`, `${pageSize * (page - 1)}`])
+    return result[0]
+  }
 }
 
 module.exports = new Column()

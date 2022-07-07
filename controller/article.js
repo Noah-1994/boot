@@ -2,11 +2,12 @@ const { Rule, validate } = require('../utils/validate')
 const validator = require('validator')
 const categoryDb = require('../dbs/category')
 const db = require('../dbs/article')
+const tagDb = require('../dbs/tag')
 const utils = require('../utils')
 
 class ArticleController {
   async create (ctx, next) {
-    const { title, content, categoryId } = ctx.request.body
+    const { title, content, categoryId, tagId } = ctx.request.body
 
     const errMessage = validate([
       new Rule(() => !utils.isEmpty(title), '文章名不能为空'),
@@ -23,18 +24,39 @@ class ArticleController {
       if (!existCategory.length) return ctx.fail('类目不存在')
     }
 
+    if (tagId) {
+      const existTag = await tagDb.getTagById(tagId)
+      if (!existTag.length) {
+        return ctx.fail('标签不存在')
+      }
+    }
+
     const existArticle = await db.getArticleByTitle(title)
     if (existArticle.length) {
       return ctx.fail('文章名已被占用')
     }
 
-    await db.create({
+    const article = await db.create({
       title,
       content,
       userId: ctx.state.user.id,
       categoryId
     })
+
+    await tagDb.linkArticle({
+      tagId,
+      articleId: article.insertId
+    })
+
     ctx.success(1, '文章创建成功')
+  }
+
+  async getList (ctx, next) {
+    const { page, pageSize, title } = ctx.query
+    const res = await db.getList({
+      page, pageSize, title
+    })
+    ctx.success(res)
   }
 }
 

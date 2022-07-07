@@ -17,6 +17,17 @@ class Article {
     const result = await connection.execute('SELECT * FROM articles WHERE title = ?;', [title])
     return result[0]
   }
+
+  async getArticleById (id) {
+    const result = await connection.execute('SELECT * FROM articles WHERE id = ?;', [id])
+    return result[0]
+  }
+
+  async getList (params) {
+    const { page = 1, pageSize = 10, title = '' } = params
+    const result = await connection.execute('SELECT id, title FROM articles WHERE title like ? LIMIT ? OFFSET ?;', [`%${title}%`, `${pageSize}`, `${pageSize * (page - 1)}`])
+    return result[0]
+  }
 }
 
 module.exports = new Article()

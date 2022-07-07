@@ -10,7 +10,7 @@ class Controller {
 
     const errMessage = validate([
       new Rule(() => !utils.isEmpty(categoryName), '类目名不能为空'),
-      new Rule(() => validator.isLength(categoryName, { min: 3, max: 10 }), '类目名长度只能为3～10个字符'),
+      new Rule(() => validator.isLength(categoryName, { min: 1, max: 10 }), '类目名长度只能为1～10个字符'),
       new Rule(() => validator.matches(categoryName, /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/), '类目名只能由汉字、数字、字母和下划线组成')
     ])
     if (errMessage) {

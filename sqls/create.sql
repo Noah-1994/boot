@@ -49,9 +49,9 @@ create table `comments` (
 `create_time` timestamp DEFAULT CURRENT_TIMESTAMP,
 `update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY(`id`),
-`user_id` bigint(20),
+`user_id` bigint(20) NOT NULL,
 CONSTRAINT `fk_comments_user` FOREIGN KEY(`user_id`) REFERENCES users(`id`),
-`article_id` bigint(20),
+`article_id` bigint(20) NOT NULL,
 CONSTRAINT `fk_comments_article` FOREIGN KEY(`article_id`) REFERENCES articles(`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
